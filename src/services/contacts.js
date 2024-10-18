@@ -9,9 +9,19 @@ const getContacts = async () => {
     throw new Error('Error retrieving contacts');
   }
 };
+const getContactById = async (contactId) => {
+    try {
+        // Отримання контакту за його ID
+        return await Contact.findById(contactId);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error retrieving contact');
+    }
+};
 
 export default {
-  getContacts,
+    getContacts,
+    getContactById
 };
 
 

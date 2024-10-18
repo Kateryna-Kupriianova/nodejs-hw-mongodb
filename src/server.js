@@ -17,6 +17,8 @@ const setupServer = () => {
   app.use(pino());
 
   app.get('/contacts', contactController.getContacts);
+
+  app.get('/contacts/:contactId', contactController.getContactById);
   
   // app.get('/contacts', async (req, res) => {
   //   res.send ('Hello World!');
