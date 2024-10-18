@@ -27,8 +27,8 @@ async function createDatabaseAndCollection() {
     await sampleContact.save();
     console.log("Sample contact added to the database.");
     
-    // Закриваємо з'єднання
-    mongoose.connection.close();
+   
+    // mongoose.connection.close();
 }
 
 createDatabaseAndCollection().catch(error => {
