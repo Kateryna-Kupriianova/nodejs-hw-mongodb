@@ -1,11 +1,20 @@
 import mongoose from 'mongoose';
 import Contact from '../models/contacts.js';
-const dbName = "phonebook";
-const MONGODB_URL = `mongodb+srv://kupriyanovforever:kk2712@cluster1.b1onp.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster1`;
+import dotenv from 'dotenv';
+dotenv.config();
+
+const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_DB, MONGODB_URL } = process.env;
+console.log('MongoDB User:', MONGODB_USER);
+console.log('MongoDB Password:', MONGODB_PASSWORD);
+console.log('MongoDB URL:', MONGODB_URL);
+console.log('MongoDB DB:', MONGODB_DB);
+const MONGODB_CONNECTION_STRING = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
+// const dbName = "phonebook";
+// const MONGODB_URL = `mongodb+srv://kupriyanovforever:kk2712@cluster1.b1onp.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster1`;
 async function initMongoConnection() { 
     try {
-        
-        await mongoose.connect(MONGODB_URL); 
+        console.log('Connecting to MongoDB with:', MONGODB_CONNECTION_STRING);
+        await mongoose.connect(MONGODB_CONNECTION_STRING); 
         console.log('Mongo connection successfully established!');
     }catch(error) {
         console.log(error);

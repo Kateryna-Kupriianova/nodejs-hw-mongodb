@@ -1,4 +1,6 @@
+import dotenv from 'dotenv';
 
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
@@ -6,7 +8,8 @@ import pino from 'pino-http';
 import contactController from './controllers/contactController.js';
 
 
-const PORT = 8080;
+
+const PORT = process.env.PORT || 8080;
 
 const setupServer = () => {
 

@@ -1,5 +1,6 @@
 import contactService from '../services/contacts.js';
 
+
 const getContacts = async (req, res) => {
   try {
     const contacts = await contactService.getContacts();
