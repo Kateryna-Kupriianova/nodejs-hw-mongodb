@@ -1,14 +1,20 @@
+import {isHttpError} from 'http-errors';
 
 
+export function errorHandler(error, req, res) {
 
-export function errorHandler (error, req, res) {
+    if (isHttpError(error) === true) {
+        return res
+            .status(error.statusCode)
+            .json({ status: error.statusCode, message: error.message,
+            });
+    }
 
     console.error(error);
       res.status(500).send({
 		status: 500,
 		message: "Something went wrong",
-		data: error || error.message,
-		// конкретне повідомлення про помилку, отримане з об'єкта помилки
-});
-      
+          data: error || error.message,
+    });
+    
   }
