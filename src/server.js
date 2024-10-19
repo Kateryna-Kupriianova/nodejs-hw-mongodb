@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 8080;
 const setupServer = () => {
 
   const app = express();
-
+ 
   app.use(contactRouter);
-  app.use(express.json());
+  
   app.use(cors());
   app.use(pino());
    

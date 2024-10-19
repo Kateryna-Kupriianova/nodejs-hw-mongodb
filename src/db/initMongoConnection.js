@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Contact from '../models/contacts.js';
+// import Contact from '../models/contacts.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -9,8 +9,7 @@ console.log('MongoDB Password:', MONGODB_PASSWORD);
 console.log('MongoDB URL:', MONGODB_URL);
 console.log('MongoDB DB:', MONGODB_DB);
 const MONGODB_CONNECTION_STRING = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
-// const dbName = "phonebook";
-// const MONGODB_URL = `mongodb+srv://kupriyanovforever:kk2712@cluster1.b1onp.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster1`;
+
 async function initMongoConnection() { 
     try {
         console.log('Connecting to MongoDB with:', MONGODB_CONNECTION_STRING);
@@ -22,27 +21,27 @@ async function initMongoConnection() {
     }
 }
 
-async function createDatabaseAndCollection() {
-    await initMongoConnection();
+// async function createDatabaseAndCollection() {
+//     await initMongoConnection();
 
-    // Додаємо перший документ для ініціалізації колекції
-    const sampleContact = new Contact({
-        name: "John Doe",
-        phoneNumber: "1234567890",
-        email: "johndoe@example.com",
-        contactType: "personal",
-    });
+//     // Додаємо перший документ для ініціалізації колекції
+//     const sampleContact = new Contact({
+//         name: "John Doe",
+//         phoneNumber: "1234567890",
+//         email: "johndoe@example.com",
+//         contactType: "personal",
+//     });
 
-    await sampleContact.save();
-    console.log("Sample contact added to the database.");
+//     await sampleContact.save();
+//     console.log("Sample contact added to the database.");
     
    
-    // mongoose.connection.close();
-}
+//     // mongoose.connection.close();
+// }
 
-createDatabaseAndCollection().catch(error => {
-    console.error('Error during database setup:', error);
-});
+// createDatabaseAndCollection().catch(error => {
+//     console.error('Error during database setup:', error);
+// });
 
 export default initMongoConnection ;
     

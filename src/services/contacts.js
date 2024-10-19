@@ -19,9 +19,21 @@ const getContactById = async (contactId) => {
     }
 };
 
+export async function addContact (contact) {
+    try {
+        // Додавання нового контакту до бази даних
+        return await Contact.create(contact);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error adding contact');
+    }
+};
+
 export default {
     getContacts,
-    getContactById
+  getContactById,
+ 
+    
 };
 
 
