@@ -5,8 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 // import Contact from './models/contacts.js';
-import contactController from './controllers/contactController.js';
-
+import contactRouter from './routers/contacts.js';
 
 
 const PORT = process.env.PORT || 8080;
@@ -15,13 +14,14 @@ const setupServer = () => {
 
   const app = express();
 
+  app.use(contactRouter);
   app.use(express.json());
   app.use(cors());
   app.use(pino());
 
-  app.get('/contacts', contactController.getContacts);
+  // app.get('/contacts', contactController.getContacts);
 
-  app.get('/contacts/:contactId', contactController.getContactById);
+  // app.get('/contacts/:contactId', contactController.getContactById);
   
   // app.get('/contacts', async (req, res) => {
   //   res.send ('Hello World!');
