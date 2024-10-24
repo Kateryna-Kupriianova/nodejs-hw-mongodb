@@ -38,7 +38,11 @@ const addContactController = async (req, res) => {
   };
   const result = await contactService.addContact(contact);
   console.log(result);
-  res.send("Add contact");
+  res.status(201).json({
+    status: 201,
+    message: 'Add contact!',
+    data: result,
+  })
       
 };
 
