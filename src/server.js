@@ -17,7 +17,7 @@ const setupServer = () => {
 
   app.use(express.json());
 
-  app.use('/api', router);
+  app.use('/', router);
 
   app.use(cors());
   app.use(pino());
