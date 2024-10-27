@@ -1,14 +1,19 @@
 import createHttpError from 'http-errors';
 import contactService from '../services/contacts.js';
-
+import { parsPaginationsParams } from '../utils/parsPaginationsParams.js';
 
 const getContacts = async (req, res) => {
+  const { page, perPage } = parsPaginationsParams(req.query);
 
-    const contacts = await contactService.getContacts();
+
+  const data = await contactService.getContacts({
+    page,
+    perPage
+  });
     res.json({
       status: 200,
       message: "Successfully found contacts!",
-      data: contacts,
+      data,
     });
 
 

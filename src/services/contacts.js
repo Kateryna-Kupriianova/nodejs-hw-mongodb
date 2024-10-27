@@ -1,9 +1,24 @@
 import Contact from '../models/contacts.js';
 
-const getContacts = async () => {
+const getContacts = async ({ page, perPage }) => {
   try {
-    // Отримання всіх контактів з бази даних
-    return await Contact.find();
+      const skip = page > 0 ? (page - 1) * perPage : 0;
+
+      const [total, contacts] = await Promise.all([
+          Contact.countDocuments(),
+          Contact.find().skip(skip).limit(perPage),
+      ]);
+      const totalPages = Math.ceil(total / perPage);
+      return {
+          contacts,
+          page,
+          perPage,
+          totalItems: total,
+          totalPages,
+          hasNextPage: totalPages-page > 0,
+          hasPreviousPage: page > 1
+      };
+
   } catch (error) {
     console.error(error);
     throw new Error('Error retrieving contacts');
@@ -11,7 +26,7 @@ const getContacts = async () => {
 };
 const getContactById = async (contactId) => {
     try {
-        // Отримання контакту за його ID
+
         return await Contact.findById(contactId);
     } catch (error) {
         console.error(error);
@@ -21,7 +36,7 @@ const getContactById = async (contactId) => {
 
 const addContact = async (contact) => {
     try {
-        // Додавання нового контакту до бази даних
+
         return await Contact.create(contact);
     } catch (error) {
         console.error(error);
@@ -31,7 +46,7 @@ const addContact = async (contact) => {
 
 const updateContact = async (contactId, contact) => {
     try {
-        // Оновлення контакту у базі даних
+
         return await Contact.findByIdAndUpdate(contactId, contact, { new: true });
     } catch (error) {
         console.error(error);
@@ -41,23 +56,15 @@ const updateContact = async (contactId, contact) => {
 
 const deleteContact = async (contactId) => {
     try {
-        // Видалення контакту з бази даних
+
         return await Contact.findByIdAndDelete(contactId);
     } catch (error) {
         console.error(error);
         throw new Error('Error deleting contact');
     }
-  
+
 }
-// export async function addContact (contact) {
-//     try {
-//         // Додавання нового контакту до бази даних
-//         return await Contact.create(contact);
-//     } catch (error) {
-//         console.error(error);
-//         throw new Error('Error adding contact');
-//     }
-// };
+
 
 export default {
     getContacts,
@@ -65,7 +72,7 @@ export default {
   addContact,
   updateContact,
   deleteContact
-    
+
 };
 
 
