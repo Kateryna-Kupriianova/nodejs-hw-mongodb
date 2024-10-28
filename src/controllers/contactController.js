@@ -1,14 +1,16 @@
 import createHttpError from 'http-errors';
 import contactService from '../services/contacts.js';
 import { parsPaginationsParams } from '../utils/parsPaginationsParams.js';
-
+import {parseSortParams} from '../utils/parseSortParams.js';
 const getContacts = async (req, res) => {
   const { page, perPage } = parsPaginationsParams(req.query);
-
+  const { sortBy, sortOrder } = parseSortParams(req.query);
 
   const data = await contactService.getContacts({
     page,
-    perPage
+    perPage,
+    sortBy,
+    sortOrder
   });
     res.json({
       status: 200,
@@ -87,19 +89,7 @@ const deleteContactController = async (req, res, next) => {
 
 };
 
-// export async function addContactController(req, res) {
-//   const contact={
-//     name: req.body.name,
-//     phoneNumber: req.body.phoneNumber,
-//     email: req.body.email,
-//     isFavourite: req.body.isFavourite,
-//     contactType: req.body.contactType
-//   }
-//    const result = await addContact(contact);
-//   console.log(result);
-//   res.send("Add contact");
 
-// };
 
 export default {
   getContacts,

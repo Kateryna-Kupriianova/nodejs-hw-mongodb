@@ -1,5 +1,5 @@
 function parsNumber(value, defaultValue) {
-    if (typeof value === 'undefined') {
+    if (typeof value !== 'string') {
         return defaultValue;
     }
 
