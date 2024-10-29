@@ -13,7 +13,7 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder }) => {
       ]);
       const totalPages = Math.ceil(total / perPage);
       return {
-          contacts,
+          data: contacts,
           page,
           perPage,
           totalItems: total,
