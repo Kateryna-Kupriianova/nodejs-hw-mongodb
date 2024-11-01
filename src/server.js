@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+import authRoutes from './routers/auth.js';
 import router from './routers/contacts.js';
 import {notFoundHandler} from './middlewares/notFoundHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
@@ -16,6 +17,8 @@ const setupServer = () => {
   const app = express();
 
   app.use(express.json());
+
+  app.use('/auth', authRoutes);
 
   app.use('/', router);
 
