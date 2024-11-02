@@ -1,16 +1,18 @@
 import Contact from '../models/contacts.js';
 
-const getContacts = async ({ page, perPage, sortBy, sortOrder }) => {
+const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
   try {
       const skip = page > 0 ? (page - 1) * perPage : 0;
 
       const [total, contacts] = await Promise.all([
-          Contact.countDocuments(),
-          Contact.find()
+          Contact.countDocuments({ userId }),
+          Contact.find({ userId })
               .sort({ [sortBy]: sortOrder })
               .skip(skip)
               .limit(perPage),
+
       ]);
+
       const totalPages = Math.ceil(total / perPage);
       return {
           data: contacts,
@@ -26,11 +28,13 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder }) => {
     console.error(error);
     throw new Error('Error retrieving contacts');
   }
+
+
 };
-const getContactById = async (contactId) => {
+const getContactById = async (contactId, userId) => {
     try {
 
-        return await Contact.findById(contactId);
+        return await Contact.findOne({ _id: contactId, userId }).populate(contactId);
     } catch (error) {
         console.error(error);
         throw new Error('Error retrieving contact');
@@ -47,20 +51,20 @@ const addContact = async (contact) => {
     }
 };
 
-const updateContact = async (contactId, contact) => {
+const updateContact = async (contactId, contact, userId) => {
     try {
 
-        return await Contact.findByIdAndUpdate(contactId, contact, { new: true });
+        return await Contact.findOneAndUpdate({ _id: contactId, userId }, contact, { new: true });
     } catch (error) {
         console.error(error);
         throw new Error('Error updating contact');
     }
 };
 
-const deleteContact = async (contactId) => {
+const deleteContact = async (contactId, userId) => {
     try {
 
-        return await Contact.findByIdAndDelete(contactId);
+        return await Contact.findOneAndDelete({ _id: contactId, userId });
     } catch (error) {
         console.error(error);
         throw new Error('Error deleting contact');

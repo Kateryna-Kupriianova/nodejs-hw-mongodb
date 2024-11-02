@@ -3,6 +3,7 @@ import contactService from '../services/contacts.js';
 import { parsPaginationsParams } from '../utils/parsPaginationsParams.js';
 import {parseSortParams} from '../utils/parseSortParams.js';
 const getContacts = async (req, res) => {
+  console.log(req.user);
   const { page, perPage } = parsPaginationsParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
 
@@ -10,7 +11,8 @@ const getContacts = async (req, res) => {
     page,
     perPage,
     sortBy,
-    sortOrder
+    sortOrder,
+    userId: req.user.userId
   });
     res.json({
       status: 200,
@@ -44,7 +46,8 @@ const addContactController = async (req, res) => {
     phoneNumber: req.body.phoneNumber,
     email: req.body.email,
     isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType
+    contactType: req.body.contactType,
+    userId: req.user.userId
   };
   const result = await contactService.addContact(contact);
   console.log(result);
