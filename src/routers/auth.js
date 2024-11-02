@@ -1,6 +1,6 @@
 import express from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { registerController, loginController, logoutController } from '../controllers/auth.js';
+import { registerController, loginController, logoutController, refreshController } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { registerSchema, loginSchema } from '../validation/auth.js';
 
@@ -13,7 +13,7 @@ authRoutes.post('/register', jsonParser, validateBody(registerSchema), ctrlWrapp
 
 authRoutes.post('/login', jsonParser, validateBody(loginSchema), ctrlWrapper(loginController));
 
-// authRoutes.post('/refresh', jsonParser, ctrlWrapper(loginController));
+authRoutes.post('/refresh', ctrlWrapper(refreshController));
 
 authRoutes.post('/logout',ctrlWrapper(logoutController));
 
