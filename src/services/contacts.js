@@ -6,7 +6,7 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
 
       const [total, contacts] = await Promise.all([
           Contact.countDocuments({ userId }),
-          Contact.find({ userId }).populate(userId)
+          Contact.find({ userId }).populate('userId')
               .sort({ [sortBy]: sortOrder })
               .skip(skip)
               .limit(perPage),
