@@ -28,7 +28,7 @@ const getContacts = async (req, res) => {
 const getContactById = async (req, res, next) => {
   const { contactId } = req.params;
 
-    const contact = await contactService.getContactById(contactId);
+    const contact = await contactService.getContactById(contactId, req.user.userId);
   if (!contact) {
     return next(createHttpError(404, 'Contact not found'));
   }
@@ -68,7 +68,7 @@ const updateContactController = async (req, res, next) => {
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType
   };
-  const result = await contactService.updateContact(contactId, contact);
+  const result = await contactService.updateContact(contactId, req.user.userId, contact);
   console.log(result);
   if (!result) {
     return next(createHttpError(404, 'Contact not found'));
@@ -83,7 +83,7 @@ const updateContactController = async (req, res, next) => {
 
 const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contactService.deleteContact(contactId);
+  const result = await contactService.deleteContact(contactId, req.user.userId);
   console.log(result);
   if (!result) {
     return next(createHttpError(404, 'Contact not found'));

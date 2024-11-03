@@ -6,7 +6,7 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
 
       const [total, contacts] = await Promise.all([
           Contact.countDocuments({ userId }),
-          Contact.find({ userId }).populate('userId')
+          Contact.find({ userId })
               .sort({ [sortBy]: sortOrder })
               .skip(skip)
               .limit(perPage),
@@ -34,7 +34,7 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
 const getContactById = async (contactId, userId) => {
     try {
 
-        return await Contact.findOne({ _id: contactId, userId }).populate(contactId);
+        return await Contact.findOne({ _id: contactId, userId });
     } catch (error) {
         console.error(error);
         throw new Error('Error retrieving contact');
