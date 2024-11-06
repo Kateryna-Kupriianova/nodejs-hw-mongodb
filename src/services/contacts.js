@@ -1,4 +1,5 @@
 import Contact from '../models/contacts.js';
+import mongoose from 'mongoose';
 
 const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
   try {
@@ -33,7 +34,9 @@ const getContacts = async ({ page, perPage, sortBy, sortOrder, userId }) => {
 };
 const getContactById = async (contactId, userId) => {
     try {
-
+        if(!mongoose.Types.ObjectId.isValid(contactId)) {
+            throw new Error('Invalid ID');
+        }
         return await Contact.findOne({ _id: contactId, userId });
     } catch (error) {
         console.error(error);
@@ -51,7 +54,7 @@ const addContact = async (contact) => {
     }
 };
 
-const updateContact = async (contactId, contact, userId) => {
+const updateContact = async (contactId, userId, contact ) => {
     try {
 
         return await Contact.findOneAndUpdate({ _id: contactId, userId }, contact, { new: true });
