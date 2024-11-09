@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import crypto from "node:crypto";
 
 import bcrypt from "bcrypt";
@@ -5,6 +8,11 @@ import createHttpError from "http-errors";
 
 import { User } from "../models/user.js";
 import { Session } from "../models/session.js";
+
+import jwt from "jsonwebtoken";
+// import { SMTP } from "../constants/index.js";
+
+import { sendEmail } from "../utils/sendEmail.js";
 
 export  async function registerUser(payload) {
     const user = await User.findOne({ email: payload.email });
@@ -77,6 +85,37 @@ export async function refreshSession(sessionId, refreshToken) {
         refreshTokenValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     });
 }
+
+export const requestResetToken = async (email) => {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw createHttpError(404, 'User not found');
+    }
+    const resetToken = jwt.sign(
+        {
+            userId: user._id,
+            email
+        },
+        process.env.JWT_SECRET,
+        {
+        expiresIn: "5m",
+        },
+    );
+
+
+    await sendEmail({
+        from: process.env.SMTP_USER,
+        to: user.email,
+        subject: "Reset your password",
+        html: `
+            <h1>Reset your password</h1>
+            <p>Click <a href="${process.env.APP_DOMAIN}/send-reset-email?token=${resetToken}">here</a> to reset your password</p>`,
+    });
+};
+
+
+
 
 
 
