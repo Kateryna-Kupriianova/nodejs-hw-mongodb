@@ -13,7 +13,10 @@ import jwt from "jsonwebtoken";
 // import { SMTP } from "../constants/index.js";
 
 import { sendEmail } from "../utils/sendEmail.js";
-
+import { TEMPLATES_DIR } from "../constants/index.js";
+import path from "node:path";
+import fs from "node:fs/promises";
+import handlebars from "handlebars";
 export  async function registerUser(payload) {
     const user = await User.findOne({ email: payload.email });
 
@@ -103,17 +106,49 @@ export const requestResetToken = async (email) => {
         },
     );
 
+    const resetPasswordTemplatePath = path.join(TEMPLATES_DIR, "reset-password-email.html");
 
+    const templateSource =  await fs.readFile(resetPasswordTemplatePath, "utf-8");
+
+    const template = handlebars.compile(templateSource);
+
+    const html = template({
+        name: user.name,
+        link: `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`
+    });
     await sendEmail({
         from: process.env.SMTP_FROM,
         to: user.email,
         subject: "Reset your password",
-        html: `
-            <h1>Reset your password</h1>
-            <p>Click <a href="${process.env.APP_DOMAIN}/send-reset-email?token=${resetToken}">here</a> to reset your password</p>`,
+        html,
     });
 };
 
+export const resetPassword = async (payload) => {
+    let entries;
+    try {
+        entries = jwt.verify(payload.token, process.env.JWT_SECRET);
+    } catch (error) {
+        if (error instanceof Error) throw createHttpError(401, 'Token expired');
+        throw error;
+    }
+
+    const user = await User.findOne({
+        email: entries.email,
+        _id: entries.userId,
+    });
+
+    if (!user) {
+        throw createHttpError(404, 'User not found');
+    }
+
+    const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+    await User.updateOne(
+        { _id: user._id },
+        { password: encryptedPassword }
+    );
+};
 
 
 

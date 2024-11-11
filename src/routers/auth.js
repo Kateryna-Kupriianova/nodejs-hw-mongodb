@@ -1,10 +1,9 @@
 import express from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { registerController, loginController, logoutController, refreshController } from '../controllers/auth.js';
+import { registerController, loginController, logoutController, refreshController, requestResetPasswordController, resetPasswordController } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { registerSchema, loginSchema } from '../validation/auth.js';
-import { requestResetPasswordController } from '../controllers/auth.js';
-import { requestResetPasswordSchema } from '../validation/auth.js';
+import { registerSchema, loginSchema, requestResetPasswordSchema, resetPasswordSchema } from '../validation/auth.js';
+
 
 const authRoutes = express.Router();
 
@@ -20,5 +19,5 @@ authRoutes.post('/logout',ctrlWrapper(logoutController));
 
 authRoutes.post('/send-reset-email',jsonParser, validateBody(requestResetPasswordSchema),ctrlWrapper(requestResetPasswordController));
 
-
+authRoutes.post('/reset-password',jsonParser, validateBody(resetPasswordSchema),ctrlWrapper(resetPasswordController));
 export default authRoutes;
