@@ -94,7 +94,7 @@ export const requestResetToken = async (email) => {
     }
     const resetToken = jwt.sign(
         {
-            userId: user._id,
+            // userId: user._id,
             email
         },
         process.env.JWT_SECRET,
@@ -105,7 +105,7 @@ export const requestResetToken = async (email) => {
 
 
     await sendEmail({
-        from: process.env.SMTP_USER,
+        from: process.env.SMTP_FROM,
         to: user.email,
         subject: "Reset your password",
         html: `
