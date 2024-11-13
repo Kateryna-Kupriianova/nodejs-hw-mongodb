@@ -63,22 +63,37 @@ export async function refreshController(req, res) {
     res.end();
 }
 
-export const requestResetPasswordController = async (req, res) => {
-    await requestResetToken(req.body.email);
-    res.json({
+// export const requestResetPasswordController = async (req, res) => {
+//     await requestResetToken(req.body.email);
+//     res.json({
+//         status: 200,
+//         message: 'Reset password email was successfully sent',
+//         data:{},
+//     });
+
+// };
+
+export async function requestResetPasswordController(req, res) {
+    const { email } = req.body;
+    await requestResetToken(email);
+    res.send({
         status: 200,
         message: 'Reset password email was successfully sent',
         data:{},
     });
+ };
 
-};
+export async function resetPasswordController(req, res) {
+    // console.log("Received token", req.body.token);
+    // await resetPassword({ token: req.body.token, password: req.body.password });
 
-export const resetPasswordController = async (req, res) => {
-    await resetPassword(req.body.token, req.body.password);
-    res.json({
-        status: 200,
-        message: 'Password was successfully reset',
-        data:{},
-    });
+    // res.json({
+    //     status: 200,
+    //     message: 'Password was successfully reset',
+    //     data:{},
+    // });
+    const { token, password } = req.body;
+    await resetPassword(password, token);
+    res.send("Reset password");
 
 };

@@ -13,10 +13,14 @@ import jwt from "jsonwebtoken";
 // import { SMTP } from "../constants/index.js";
 
 import { sendEmail } from "../utils/sendEmail.js";
+
+// import { error } from "node:console";
 import { TEMPLATES_DIR } from "../constants/index.js";
 import path from "node:path";
 import fs from "node:fs/promises";
 import handlebars from "handlebars";
+
+
 export  async function registerUser(payload) {
     const user = await User.findOne({ email: payload.email });
 
@@ -89,7 +93,7 @@ export async function refreshSession(sessionId, refreshToken) {
     });
 }
 
-export const requestResetToken = async (email) => {
+export async function requestResetToken (email) {
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -97,7 +101,7 @@ export const requestResetToken = async (email) => {
     }
     const resetToken = jwt.sign(
         {
-            // userId: user._id,
+            userId: user._id,
             email
         },
         process.env.JWT_SECRET,
@@ -108,7 +112,7 @@ export const requestResetToken = async (email) => {
 
     const resetPasswordTemplatePath = path.join(TEMPLATES_DIR, "reset-password-email.html");
 
-    const templateSource =  await fs.readFile(resetPasswordTemplatePath, "utf-8");
+    const templateSource =  await fs.readFile(resetPasswordTemplatePath, {encoding: "utf8"});
 
     const template = handlebars.compile(templateSource);
 
@@ -124,31 +128,62 @@ export const requestResetToken = async (email) => {
     });
 };
 
-export const resetPassword = async (payload) => {
-    let entries;
+
+
+export async function resetPassword(token, password) {
     try {
-        entries = jwt.verify(payload.token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
+        if(user===null) {
+            throw createHttpError(404, 'User not found');
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.findByIdAndUpdate(user._id, { password: hashedPassword });
     } catch (error) {
-        if (error instanceof Error) throw createHttpError(401, 'Token expired');
+           if (error.name === "TokenExpiredError"|| error.name === "JsonWebTokenError") {
+              throw createHttpError(401, 'Token error');
+
+           }
         throw error;
+
+
     }
 
-    const user = await User.findOne({
-        email: entries.email,
-        _id: entries.userId,
-    });
+}
 
-    if (!user) {
-        throw createHttpError(404, 'User not found');
-    }
 
-    const encryptedPassword = await bcrypt.hash(payload.password, 10);
+// export const resetPassword = async (payload) => {
+//     const { token, password } = payload;
+//     if (!token) {
+//         throw createHttpError(401, 'Token must be provided');
+//     }
+//     console.log('Token received in resetPassword', token);
+//     let entries;
+//     try {
+//         entries = jwt.verify(token, process.env.JWT_SECRET);
+//     } catch (error) {
+//         console.log("JWT error", error);
+//         if (error.name === "TokenExpiredError") { throw createHttpError(401, 'Token expired'); }
+//         throw createHttpError(401, 'Invalid token');
+//     }
 
-    await User.updateOne(
-        { _id: user._id },
-        { password: encryptedPassword }
-    );
-};
+//     const user = await User.findOne({
+//         email: entries.email
+//         // token,
+//         // _id: entries.userId,
+//     });
+
+//     if (!user) {
+//         throw createHttpError(404, 'User not found');
+//     }
+
+//     const encryptedPassword = await bcrypt.hash(password, 10);
+
+//     await User.updateOne(
+//         { _id: user._id },
+//         { password: encryptedPassword }
+//     );
+// };
 
 
 
