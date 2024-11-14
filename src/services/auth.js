@@ -10,11 +10,11 @@ import { User } from "../models/user.js";
 import { Session } from "../models/session.js";
 
 import jwt from "jsonwebtoken";
-// import { SMTP } from "../constants/index.js";
+
 
 import { sendEmail } from "../utils/sendEmail.js";
 
-// import { error } from "node:console";
+
 import { TEMPLATES_DIR } from "../constants/index.js";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -110,9 +110,19 @@ export async function requestResetToken (email) {
         },
     );
 
-    const resetPasswordTemplatePath = path.join(TEMPLATES_DIR, "reset-password-email.html");
 
-    const templateSource =  await fs.readFile(resetPasswordTemplatePath, {encoding: "utf8"});
+
+    const resetPasswordTemplatePath = path.join(TEMPLATES_DIR, "reset-password-email.html");
+    let templateSource;
+
+    try {
+       templateSource =  await fs.readFile(resetPasswordTemplatePath, {encoding: "utf8"});
+    } catch (error) {
+        console.error("Template read error:", error);
+        throw new Error("Failed to read template");
+    }
+
+
 
     const template = handlebars.compile(templateSource);
 
@@ -120,12 +130,20 @@ export async function requestResetToken (email) {
         name: user.name,
         link: `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`
     });
-    await sendEmail({
+
+    try {
+      await sendEmail({
         from: process.env.SMTP_FROM,
         to: user.email,
         subject: "Reset your password",
         html,
     });
+    } catch (error) {
+        console.error("Email send error:", error);
+        throw new Error("Failed to send email");
+    }
+
+
 };
 
 
@@ -152,38 +170,6 @@ export async function resetPassword(token, password) {
 }
 
 
-// export const resetPassword = async (payload) => {
-//     const { token, password } = payload;
-//     if (!token) {
-//         throw createHttpError(401, 'Token must be provided');
-//     }
-//     console.log('Token received in resetPassword', token);
-//     let entries;
-//     try {
-//         entries = jwt.verify(token, process.env.JWT_SECRET);
-//     } catch (error) {
-//         console.log("JWT error", error);
-//         if (error.name === "TokenExpiredError") { throw createHttpError(401, 'Token expired'); }
-//         throw createHttpError(401, 'Invalid token');
-//     }
-
-//     const user = await User.findOne({
-//         email: entries.email
-//         // token,
-//         // _id: entries.userId,
-//     });
-
-//     if (!user) {
-//         throw createHttpError(404, 'User not found');
-//     }
-
-//     const encryptedPassword = await bcrypt.hash(password, 10);
-
-//     await User.updateOne(
-//         { _id: user._id },
-//         { password: encryptedPassword }
-//     );
-// };
 
 
 

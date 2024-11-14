@@ -50,7 +50,7 @@ const addContactController = async (req, res) => {
   if (req.file) {
     if (process.env.ENABLE_CLOUDINARY==="true") {
       const result = await uploadToCloudinary(req.file.path);
-      fs.unlink(req.file.path);
+      await fs.unlink(req.file.path);
 
 
       avatar = result.secure_url;
@@ -83,18 +83,36 @@ const addContactController = async (req, res) => {
 
 const updateContactController = async (req, res, next) => {
   const { contactId } = req.params;
+  let avatar = null;
+  if (req.file) {
+    if (process.env.ENABLE_CLOUDINARY==="true") {
+      const result = await uploadToCloudinary(req.file.path);
+      await fs.unlink(req.file.path);
+
+
+      avatar = result.secure_url;
+    } else {
+      await fs.rename(req.file.path, path.resolve("src", "public", "avatars", req.file.filename));
+
+      avatar = `http://localhost:8080/avatars/${req.file.filename}`;
+    }
+
+  }
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
     email: req.body.email,
     isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType
+    contactType: req.body.contactType,
+    avatar,
   };
+
   const result = await contactService.updateContact(contactId, req.user.userId, contact);
-  console.log(result);
+
   if (!result) {
     return next(createHttpError(404, 'Contact not found'));
   }
+  console.log(result);
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact!',
