@@ -1,5 +1,8 @@
 
-
+/src/tmp/*
+!src/tmp/.gitkeep
+/src/public/avatars/*
+!src/public/avatars/.gitkeep
 /node_modules
 
 .env

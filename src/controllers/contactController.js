@@ -1,7 +1,11 @@
 import createHttpError from 'http-errors';
 import contactService from '../services/contacts.js';
 import { parsPaginationsParams } from '../utils/parsPaginationsParams.js';
-import {parseSortParams} from '../utils/parseSortParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 const getContacts = async (req, res) => {
   console.log(req.user);
   const { page, perPage } = parsPaginationsParams(req.query);
@@ -41,13 +45,31 @@ const getContactById = async (req, res, next) => {
 };
 
 const addContactController = async (req, res) => {
+  let avatar = null;
+
+  if (req.file) {
+    if (process.env.ENABLE_CLOUDINARY==="true") {
+      const result = await uploadToCloudinary(req.file.path);
+      fs.unlink(req.file.path);
+
+
+      avatar = result.secure_url;
+    } else {
+      await fs.rename(req.file.path, path.resolve("src", "public", "avatars", req.file.filename));
+
+      avatar = `http://localhost:8080/avatars/${req.file.filename}`;
+    }
+
+  }
+
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
     email: req.body.email,
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
-    userId: req.user.userId
+    userId: req.user.userId,
+    avatar,
   };
   const result = await contactService.addContact(contact);
   console.log(result);

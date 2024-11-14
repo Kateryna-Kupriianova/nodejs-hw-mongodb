@@ -10,12 +10,14 @@ import {notFoundHandler} from './middlewares/notFoundHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import {authenticate} from './middlewares/authenticate.js';
-
+import path from 'node:path';
 const PORT = process.env.PORT || 8080;
 
 const setupServer = () => {
 
   const app = express();
+
+  app.use("/avatars", express.static(path.resolve("src", "public", "avatars")));
 
   app.use(cookieParser());
 
