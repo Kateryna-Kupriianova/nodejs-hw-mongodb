@@ -2,8 +2,8 @@ import createHttpError from 'http-errors';
 import contactService from '../services/contacts.js';
 import { parsPaginationsParams } from '../utils/parsPaginationsParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+// import fs from 'node:fs/promises';
+// import path from 'node:path';
 
 import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 const getContacts = async (req, res) => {
@@ -44,80 +44,139 @@ const getContactById = async (req, res, next) => {
 
 };
 
-const addContactController = async (req, res) => {
-  let avatar = null;
+const addContactController = async (req, res, next) => {
+   try {
+        let photo = null;
+        if (req.file) {
+            const result = await uploadToCloudinary(req.file.path);
+            photo = result; // URL фото з Cloudinary
+        }
 
-  if (req.file) {
-    if (process.env.ENABLE_CLOUDINARY==="true") {
-      const result = await uploadToCloudinary(req.file.path);
-      await fs.unlink(req.file.path);
+        const contact = {
+            name: req.body.name,
+            phoneNumber: req.body.phoneNumber,
+            email: req.body.email,
+            isFavourite: req.body.isFavourite,
+            contactType: req.body.contactType,
+            userId: req.user.userId,
+            photo,
+        };
 
-
-      avatar = result.secure_url;
-    } else {
-      await fs.rename(req.file.path, path.resolve("src", "public", "avatars", req.file.filename));
-
-      avatar = `http://localhost:8080/avatars/${req.file.filename}`;
+        const result = await contactService.addContact(contact);
+        res.status(201).json({
+            status: 201,
+            message: "Contact added successfully!",
+            data: result,
+        });
+   } catch (error) {
+        console.error(error);
+        next(createHttpError(500, 'Failed to add contact'));
     }
+  // let photo = null;
 
-  }
+  // if (req.file) {
+  //   if (process.env.ENABLE_CLOUDINARY==="true") {
+  //     const result = await uploadToCloudinary(req.file.path);
+  //     await fs.unlink(req.file.path);
 
-  const contact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-    userId: req.user.userId,
-    avatar,
-  };
-  const result = await contactService.addContact(contact);
-  console.log(result);
-  res.status(201).json({
-    status: 201,
-    message: 'Add contact!',
-    data: result,
-  })
+
+  //     photo = result.secure_url;
+  //   } else {
+  //     await fs.rename(req.file.path, path.resolve("src", "public", "photos", req.file.filename));
+
+  //     photo = `http://localhost:8080/photos/${req.file.filename}`;
+  //   }
+
+  // }
+
+  // const contact = {
+  //   name: req.body.name,
+  //   phoneNumber: req.body.phoneNumber,
+  //   email: req.body.email,
+  //   isFavourite: req.body.isFavourite,
+  //   contactType: req.body.contactType,
+  //   userId: req.user.userId,
+  //   photo,
+  // };
+  // const result = await contactService.addContact(contact);
+  // console.log(result);
+  // res.status(201).json({
+  //   status: 201,
+  //   message: 'Add contact!',
+  //   data: result,
+  // })
 
 };
 
 const updateContactController = async (req, res, next) => {
-  const { contactId } = req.params;
-  let avatar = null;
-  if (req.file) {
-    if (process.env.ENABLE_CLOUDINARY==="true") {
-      const result = await uploadToCloudinary(req.file.path);
-      await fs.unlink(req.file.path);
+  try {
+        const { contactId } = req.params;
+        let photo = null;
+        if (req.file) {
+            const result = await uploadToCloudinary(req.file.path);
+            photo = result; // URL фото з Cloudinary
+        }
 
+        const contact = {
+            name: req.body.name,
+            phoneNumber: req.body.phoneNumber,
+            email: req.body.email,
+            isFavourite: req.body.isFavourite,
+            contactType: req.body.contactType,
+            ...(photo && { photo }), // Додаємо photo, якщо є нове зображення
+        };
 
-      avatar = result.secure_url;
-    } else {
-      await fs.rename(req.file.path, path.resolve("src", "public", "avatars", req.file.filename));
+        const result = await contactService.updateContact(contactId, req.user.userId, contact);
 
-      avatar = `http://localhost:8080/avatars/${req.file.filename}`;
+        if (!result) {
+            return next(createHttpError(404, 'Contact not found'));
+        }
+
+        res.status(200).json({
+            status: 200,
+            message: "Contact updated successfully!",
+            data: result,
+        });
+  } catch (error) {
+        console.error(error);
+        next(createHttpError(500, 'Failed to update contact'));
     }
+  // const { contactId } = req.params;
+  // let photo = null;
+  // if (req.file) {
+  //   if (process.env.ENABLE_CLOUDINARY==="true") {
+  //     const result = await uploadToCloudinary(req.file.path);
+  //     await fs.unlink(req.file.path);
 
-  }
-  const contact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-    avatar,
-  };
 
-  const result = await contactService.updateContact(contactId, req.user.userId, contact);
+  //     photo = result.secure_url;
+  //   } else {
+  //     await fs.rename(req.file.path, path.resolve("src", "public", "photos", req.file.filename));
 
-  if (!result) {
-    return next(createHttpError(404, 'Contact not found'));
-  }
-  console.log(result);
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: result,
-  })
+  //     photo = `http://localhost:8080/photos/${req.file.filename}`;
+  //   }
+
+  // }
+  // const contact = {
+  //   name: req.body.name,
+  //   phoneNumber: req.body.phoneNumber,
+  //   email: req.body.email,
+  //   isFavourite: req.body.isFavourite,
+  //   contactType: req.body.contactType,
+  //   photo,
+  // };
+
+  // const result = await contactService.updateContact(contactId, req.user.userId, contact);
+
+  // if (!result) {
+  //   return next(createHttpError(404, 'Contact not found'));
+  // }
+  // console.log(result);
+  // res.status(200).json({
+  //   status: 200,
+  //   message: 'Successfully patched a contact!',
+  //   data: result,
+  // })
 
 };
 

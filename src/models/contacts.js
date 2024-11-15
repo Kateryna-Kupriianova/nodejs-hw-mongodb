@@ -28,7 +28,7 @@ const contactSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    avatar: {
+    photo: {
         type: String,
         default: null,
     }

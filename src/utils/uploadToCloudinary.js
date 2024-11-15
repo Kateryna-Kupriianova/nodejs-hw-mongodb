@@ -1,4 +1,5 @@
 import cloudinary from 'cloudinary';
+import fs from 'fs/promises';
 
 cloudinary.v2.config({
     secure: true,
@@ -7,6 +8,20 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export function uploadToCloudinary(filePath) {
-    return cloudinary.v2.uploader.upload(filePath);
+// export function uploadToCloudinary(filePath) {
+//     return cloudinary.v2.uploader.upload(filePath);
+// }
+
+export async function uploadToCloudinary(filePath) {
+    try {
+      const result = await cloudinary.v2.uploader.upload(filePath);
+    await fs.unlink (filePath);
+    return result.secure_url;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to upload photo');
+    }
+
 }
+
+

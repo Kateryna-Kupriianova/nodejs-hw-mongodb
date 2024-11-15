@@ -128,7 +128,7 @@ export async function requestResetToken (email) {
 
     const html = template({
         name: user.name,
-        link: `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`
+        link: `${process.env.APP_DOMAIN}/reset-pwd?token=${resetToken}`
     });
 
     try {
@@ -152,11 +152,12 @@ export async function resetPassword(token, password) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
-        if(user===null) {
+        if(!user) {
             throw createHttpError(404, 'User not found');
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+        await Session.deleteMany({ userId: user._id });
     } catch (error) {
            if (error.name === "TokenExpiredError"|| error.name === "JsonWebTokenError") {
               throw createHttpError(401, 'Token error');

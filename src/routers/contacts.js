@@ -13,9 +13,9 @@ router.get('/contacts', ctrlWrapper(contactController.getContacts));
 
 router.get('/contacts/:contactId', isValidId, ctrlWrapper(contactController.getContactById));
 
-router.post('/contacts', upload.single('avatar'), express.json(), validateBody(createContactSchema), ctrlWrapper(contactController.addContactController));
+router.post('/contacts', upload.single('photo'), express.json(), validateBody(createContactSchema), ctrlWrapper(contactController.addContactController));
 
-router.patch('/contacts/:contactId', isValidId, express.json(), validateBody(updateContactSchema), ctrlWrapper(contactController.updateContactController));
+router.patch('/contacts/:contactId', upload.single('photo'), isValidId, express.json(), validateBody(updateContactSchema), ctrlWrapper(contactController.updateContactController));
 
 router.delete('/contacts/:contactId', isValidId, ctrlWrapper(contactController.deleteContactController));
 export default router;
