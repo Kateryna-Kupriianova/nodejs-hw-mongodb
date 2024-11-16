@@ -1,7 +1,7 @@
 tags:
   - Contacts
 summary: Get contact by id
-description: Get contact by id
+description: Retrieves detailed information about a specific contact from the phonebook based on the provided unique identifier (ID). This endpoint allows users to fetch all the relevant details associated with the contact, including their name, phone number, email address, and additional data such as whether the contact is marked as a favorite. It ensures the contact exists and returns a 404 error if the contact is not found in the database. This operation requires authentication using a valid bearer token.
 operationId: getContactById
 security:
   - bearerAuth: []
@@ -22,7 +22,7 @@ responses:
         schema:
           type: object
           required:
-            - stutus
+            - status
             - message
             - data
           properties:
@@ -42,7 +42,7 @@ responses:
         schema:
           type: object
           required:
-            - stutus
+            - status
             - message
           properties:
             stutus:
@@ -50,4 +50,4 @@ responses:
               example: 404
             message:
               type: string
-              example: 'Contact with id 1 not found'
+              example: 'Not found'

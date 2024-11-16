@@ -1,0 +1,47 @@
+tags:
+  - Contacts
+summary: Delete contact by id
+operationId: deleteContactById
+description: 'Deletes a contact from the phonebook based on the provided unique identifier (ID). This operation requires authentication using a valid bearer token.'
+security:
+  - bearerAuth: []
+
+parameters:
+  - name: id
+    in: path
+    description: ID of contact to delete
+    required: true
+    schema:
+      type: integer
+      format: int64
+    example: 1
+
+responses:
+  '204':
+    description: 'Contact deleted'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: integer
+              example: 204
+  '404':
+    description: contact not found
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: 'Not found'

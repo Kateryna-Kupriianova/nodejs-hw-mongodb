@@ -1,0 +1,89 @@
+tags:
+  - Contacts
+summary: Update contact by id
+operationId: UpdateContactById
+description: 'Updates a contact in the phonebook based on the provided unique identifier (ID). This operation requires authentication using a valid bearer token.'
+security:
+  - bearerAuth: []
+parameters:
+  - name: id
+    in: path
+    description: ID of contact to update
+    required: true
+    schema:
+      type: integer
+      format: int64
+    example: 1
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - email
+          - contactType
+          - userId
+          - photo
+          - isFavourite
+        properties:
+          name:
+            type: string
+            example: John Doe
+          phoneNumber:
+            type: string
+            example: +380123456789
+          email:
+            type: string
+            example: 0xYtJ@example.com
+          contactType:
+            type: string
+            example: friend
+          userId:
+            type: string
+            example: 1
+          photo:
+            type: string
+            example: https://example.com/photo.jpg
+          isFavourite:
+            type: boolean
+            example: true
+responses:
+  '200':
+    description: successful operation
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            stutus:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully updated contact with id 1'
+            data:
+              type: object
+              $ref: ../../../components/schemas/contact.yaml
+  '404':
+    description: contact not found
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            stutus:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: 'Not found'

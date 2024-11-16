@@ -1,0 +1,82 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: createContact
+description: 'This endpoint allows users to create a new contact in the phonebook. It requires authentication using a valid bearer token.'
+security:
+  - bearerAuth: []
+
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - email
+          - contactType
+          - userId
+          - photo
+          - isFavourite
+        properties:
+          name:
+            type: string
+            example: John Doe
+          phoneNumber:
+            type: string
+            example: +380123456789
+          email:
+            type: string
+            example: 0xYtJ@example.com
+          contactType:
+            type: string
+            example: personal
+          userId:
+            type: string
+            example: 1
+          photo:
+            description: "Contact's photo"
+            type: string
+            example: https://example.com/photo.jpg
+            format: binary
+          isFavourite:
+            type: boolean
+            example: false
+
+responses:
+  '201':
+    description: 'Contact created'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Contact added successfully!'
+            data:
+              $ref: ../../components/schemas/contact.yaml
+  '400':
+    description: 'Bad request'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: 'Bad request'
