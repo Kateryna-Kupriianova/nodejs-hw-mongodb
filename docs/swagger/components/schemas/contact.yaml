@@ -1,0 +1,44 @@
+type: object
+required:
+  - _id
+  - name
+  - phoneNumber
+  - email
+  - contactType
+  - userId
+  - photo
+  - isFavourite
+properties:
+  _id:
+    description: 'Contact`s id'
+    type: string
+    example: 1
+  name:
+    description: 'Contact`s name'
+    type: string
+    example: John Doe
+  phoneNumber:
+    description: 'Contact`s phone number'
+    type: string
+    example: +380123456789
+  email:
+    description: 'Contact`s email'
+    type: string
+    example: 0xYtJ@example.com
+  contactType:
+    description: 'Contact`s type'
+    type: string
+    example: personal
+  userId:
+    description: 'User`s id'
+    type: string
+    example: 1
+  photo:
+    description: 'Contact`s photo'
+    type: string
+    example: 'https://example.com/photo.png'
+    default: null
+  isFavourite:
+    description: 'Is contact favourite'
+    type: boolean
+    default: false
