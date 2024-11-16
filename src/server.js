@@ -11,11 +11,13 @@ import {errorHandler} from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import {authenticate} from './middlewares/authenticate.js';
 import path from 'node:path';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 const PORT = process.env.PORT || 8080;
 
 const setupServer = () => {
 
   const app = express();
+
 
   app.use("/avatars", express.static(path.resolve("src", "public", "avatars")));
 
@@ -32,6 +34,9 @@ const setupServer = () => {
 
   app.use(notFoundHandler);
   app.use(errorHandler);
+
+  app.use ('/', express.static(path.resolve("src", "public")));
+  app.use('/docs', swaggerDocs);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
