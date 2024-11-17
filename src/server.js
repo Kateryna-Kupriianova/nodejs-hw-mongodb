@@ -15,13 +15,13 @@ import { swaggerDocs } from './middlewares/swaggerDocs.js';
 const PORT = process.env.PORT || 8080;
 
 const setupServer = () => {
-  const swaggerUI = require('swagger-ui-express');
+
   const app = express();
 
   app.use('/', express.static(path.resolve("src", "public")));
   app.use("/photos", express.static(path.resolve("src", "public", "photos")));
 
-  app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+  app.use('/api-docs', (swaggerDocs()));
 
   app.use(cookieParser());
   app.use(express.json());
