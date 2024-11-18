@@ -14,7 +14,7 @@
       "url": "http://127.0.0.1:8080"
     },
     {
-      "url": ""
+      "url": "https://nodejs-hw-mongodb-2-a3uw.onrender.com"
     }
   ],
   "tags": [
@@ -137,23 +137,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Contact deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 204
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Contact deleted"
           },
           "404": {
             "description": "contact not found",
@@ -209,18 +193,9 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "name",
-                  "phoneNumber",
-                  "email",
-                  "contactType",
-                  "userId",
-                  "photo",
-                  "isFavourite"
-                ],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -237,10 +212,6 @@
                   "contactType": {
                     "type": "string",
                     "example": "friend"
-                  },
-                  "userId": {
-                    "type": "string",
-                    "example": 1
                   },
                   "photo": {
                     "type": "string",
@@ -481,7 +452,6 @@
                   "phoneNumber",
                   "email",
                   "contactType",
-                  "userId",
                   "photo",
                   "isFavourite"
                 ],
@@ -501,10 +471,6 @@
                   "contactType": {
                     "type": "string",
                     "example": "personal"
-                  },
-                  "userId": {
-                    "type": "string",
-                    "example": 1
                   },
                   "photo": {
                     "description": "Contact's photo",
