@@ -17,17 +17,10 @@ parameters:
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
-        required:
-          - name
-          - phoneNumber
-          - email
-          - contactType
-          - userId
-          - photo
-          - isFavourite
+
         properties:
           name:
             type: string
@@ -41,9 +34,7 @@ requestBody:
           contactType:
             type: string
             example: friend
-          userId:
-            type: string
-            example: 1
+
           photo:
             type: string
             example: https://example.com/photo.jpg

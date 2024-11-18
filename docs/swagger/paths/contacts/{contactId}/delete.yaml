@@ -19,16 +19,7 @@ parameters:
 responses:
   '204':
     description: 'Contact deleted'
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - status
-          properties:
-            status:
-              type: integer
-              example: 204
+
   '404':
     description: contact not found
     content:

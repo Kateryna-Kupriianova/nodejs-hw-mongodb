@@ -16,7 +16,6 @@ requestBody:
           - phoneNumber
           - email
           - contactType
-          - userId
           - photo
           - isFavourite
         properties:
@@ -32,9 +31,7 @@ requestBody:
           contactType:
             type: string
             example: personal
-          userId:
-            type: string
-            example: 1
+
           photo:
             description: "Contact's photo"
             type: string
