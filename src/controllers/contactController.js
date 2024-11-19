@@ -49,7 +49,7 @@ const addContactController = async (req, res, next) => {
         let photo = null;
         if (req.file) {
             const result = await uploadToCloudinary(req.file.path);
-            photo = result; // URL фото з Cloudinary
+            photo = result;
         }
 
         const contact = {
@@ -72,39 +72,6 @@ const addContactController = async (req, res, next) => {
         console.error(error);
         next(createHttpError(500, 'Failed to add contact'));
     }
-  // let photo = null;
-
-  // if (req.file) {
-  //   if (process.env.ENABLE_CLOUDINARY==="true") {
-  //     const result = await uploadToCloudinary(req.file.path);
-  //     await fs.unlink(req.file.path);
-
-
-  //     photo = result.secure_url;
-  //   } else {
-  //     await fs.rename(req.file.path, path.resolve("src", "public", "photos", req.file.filename));
-
-  //     photo = `http://localhost:8080/photos/${req.file.filename}`;
-  //   }
-
-  // }
-
-  // const contact = {
-  //   name: req.body.name,
-  //   phoneNumber: req.body.phoneNumber,
-  //   email: req.body.email,
-  //   isFavourite: req.body.isFavourite,
-  //   contactType: req.body.contactType,
-  //   userId: req.user.userId,
-  //   photo,
-  // };
-  // const result = await contactService.addContact(contact);
-  // console.log(result);
-  // res.status(201).json({
-  //   status: 201,
-  //   message: 'Add contact!',
-  //   data: result,
-  // })
 
 };
 
@@ -114,7 +81,7 @@ const updateContactController = async (req, res, next) => {
         let photo = null;
         if (req.file) {
             const result = await uploadToCloudinary(req.file.path);
-            photo = result; // URL фото з Cloudinary
+            photo = result;
         }
 
         const contact = {
@@ -123,7 +90,7 @@ const updateContactController = async (req, res, next) => {
             email: req.body.email,
             isFavourite: req.body.isFavourite,
             contactType: req.body.contactType,
-            ...(photo && { photo }), // Додаємо photo, якщо є нове зображення
+            ...(photo && { photo }),
         };
 
         const result = await contactService.updateContact(contactId, req.user.userId, contact);
@@ -141,42 +108,6 @@ const updateContactController = async (req, res, next) => {
         console.error(error);
         next(createHttpError(500, 'Failed to update contact'));
     }
-  // const { contactId } = req.params;
-  // let photo = null;
-  // if (req.file) {
-  //   if (process.env.ENABLE_CLOUDINARY==="true") {
-  //     const result = await uploadToCloudinary(req.file.path);
-  //     await fs.unlink(req.file.path);
-
-
-  //     photo = result.secure_url;
-  //   } else {
-  //     await fs.rename(req.file.path, path.resolve("src", "public", "photos", req.file.filename));
-
-  //     photo = `http://localhost:8080/photos/${req.file.filename}`;
-  //   }
-
-  // }
-  // const contact = {
-  //   name: req.body.name,
-  //   phoneNumber: req.body.phoneNumber,
-  //   email: req.body.email,
-  //   isFavourite: req.body.isFavourite,
-  //   contactType: req.body.contactType,
-  //   photo,
-  // };
-
-  // const result = await contactService.updateContact(contactId, req.user.userId, contact);
-
-  // if (!result) {
-  //   return next(createHttpError(404, 'Contact not found'));
-  // }
-  // console.log(result);
-  // res.status(200).json({
-  //   status: 200,
-  //   message: 'Successfully patched a contact!',
-  //   data: result,
-  // })
 
 };
 
